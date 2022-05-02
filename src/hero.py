@@ -2,7 +2,7 @@ import pygame
 import random
 #model
 class Hero(pygame.sprite.Sprite):
-    def __init__(self, name, x, y, img_file):
+    def __init__(self, name, x, y, img_file, dmg_img_file):
         #initialize all the Sprite functionality
         pygame.sprite.Sprite.__init__(self)
 
@@ -11,15 +11,19 @@ class Hero(pygame.sprite.Sprite):
         #and uses them to update the screen
 
         #create surface object image
-        self.image = pygame.image.load(img_file).convert_alpha()
+
         #get the rectangle for positioning
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+        
         #set other attributes
         self.name = name
         self.speed = 3
-        self.health = 3
+        self.health = 10
+        self.image = pygame.image.load(img_file).convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.dmgSprite = dmg_img_file
+        self.hltSprite = img_file
 
     #methods to make moving our hero easier
     def move_up(self):
@@ -31,11 +35,30 @@ class Hero(pygame.sprite.Sprite):
     def move_right(self):
         self.rect.x += self.speed
 
+    def spriteChange(self):
+      if(self.health <= 5):
+        self.image = pygame.image.load(self.dmgSprite)
+      else:
+        self.image = pygame.image.load(self.hltSprite)
+
     def fight(self, opponent):
-        if(random.randrange(3)):
-            self.health -= 1
-            print("attack failed. Remaining Health: ", self.health)
+        d20 = random.randrange(1,20)
+        if(d20 == 1):
+            self.health -= 2
+            self.spriteChange()
+            print("attack critically failed! Remaining Health: ", self.health)
             return False
-        else:
-            print("successful attack")
-        return True
+        elif(d20 < 10):
+            self.health -= 1
+            self.spriteChange()
+            print("attack failed! Remaining Health: ", self.health)
+            return False
+        elif (d20 < 20):
+            print("successful attack!")
+            return True
+        elif (d20 == 20):
+          self.health += 1
+          self.spriteChange()
+          print("critical hit! You abosorbed the enemy's health! Remaining Health: ", self.health)
+          return True
+

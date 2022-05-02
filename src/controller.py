@@ -18,12 +18,12 @@ class Controller:
         """Load the sprites that we need"""
 
         self.enemies = pygame.sprite.Group()
-        num_enemies = 3
+        num_enemies = 5
         for i in range(num_enemies):
-            x = random.randrange(100, 400)
-            y = random.randrange(100, 400)
+            x = random.randrange(100, 300)
+            y = random.randrange(100, 300)
             self.enemies.add(enemy.Enemy("Boogie", x, y, 'assets/enemy.png'))
-        self.hero = hero.Hero("Conan", 50, 80, "assets/hero.png")
+        self.hero = hero.Hero("Conan", 50, 80, "assets/hero.png", "assets/hero_damaged.jpg")
         self.all_sprites = pygame.sprite.Group((self.hero,) + tuple(self.enemies))
         self.state = "GAME"
 
@@ -63,7 +63,7 @@ class Controller:
             # redraw the entire screen
             self.enemies.update()
             self.screen.blit(self.background, (0, 0))
-            if(self.hero.health == 0):
+            if(self.hero.health <= 0):
                 self.state = "GAMEOVER"
             self.all_sprites.draw(self.screen)
 
